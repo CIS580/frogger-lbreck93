@@ -7,7 +7,7 @@ const Player = require('./player.js');
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
-var player = new Player({x: 0, y: 240})
+var player = new Player({x: 0, y: 240});
 
 /**
  * @function masterLoop
@@ -17,7 +17,7 @@ var player = new Player({x: 0, y: 240})
 var masterLoop = function(timestamp) {
   game.loop(timestamp);
   window.requestAnimationFrame(masterLoop);
-}
+};
 masterLoop(performance.now());
 
 

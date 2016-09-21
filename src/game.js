@@ -53,4 +53,4 @@ Game.prototype.loop = function(newTime) {
 
   // Flip the back buffer
   this.frontCtx.drawImage(this.backBuffer, 0, 0);
-}
+};
