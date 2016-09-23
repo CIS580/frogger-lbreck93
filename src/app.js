@@ -111,7 +111,7 @@ function update(elapsedTime) {
 
         }
     }
-    if (265 < player.x){
+    if (265 < player.x && player.x < 300){
         player.state = 'win'
     }
     if(player.state == 'win'){
