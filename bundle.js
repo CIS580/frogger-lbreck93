@@ -21,9 +21,10 @@ var sedan2 = new Sedan({row: 2, cavasHeight: -50});
 var sedan3 = new Sedan({row: 3, cavasHeight: canvas.height});
 
 var river1 = new River({row:3, canvasHeight: canvas.height});
-var crate1 = new Crate({row:3, place: 50});
-var crate2 = new Crate({row:3, place: 220});
-var crate3 = new Crate({row:3, place: 375});
+var crate1 = new Crate({row:3, place: 20});
+var crate2 = new Crate({row:3, place: 125});
+var crate3 = new Crate({row:3, place: 250});
+var crate4 = new Crate({row:3, place: 370});
 // var em = new EntityManager(canvas.width, canvas.height, 64);
 //
 // em.addEntity(player);
@@ -72,6 +73,7 @@ function update(elapsedTime) {
     crate1.update(elapsedTime, canvas);
     crate2.update(elapsedTime, canvas);
     crate3.update(elapsedTime, canvas);
+    crate4.update(elapsedTime, canvas);
     player.update(elapsedTime, canvas);
 
 
@@ -79,15 +81,33 @@ function update(elapsedTime) {
         player.state = 'dead';
         console.log('you got hit by a truck bro');
     }
+    if (player.checkForCollision(player, sedan2)){
+        player.state = 'dead';
+        console.log('you got hit by a truck bro');
+    }
+    // bootleg water check
+    if (192 < player.x || player.x < 256){
+        if ((player.checkForCollision(player, crate1) && crate1.state == 'sink')||
+            (player.checkForCollision(player, crate2) && crate2.state == 'sink')||
+            (player.checkForCollision(player, crate3) && crate3.state == 'sink')||
+            (player.checkForCollision(player, crate4) && crate4.state == 'sink')){
+            player.state = 'dead';
+            console.log('froggy drowned, what?');
+        }
+    }
 
     if (player.state == 'dead'){
         if (player.lives == 0){
-            //gameover
+            player.state = 'gameover';
+            player.x = 500;
+            player.y = 200;
         }
         else{
             player.lives -=1;
             player.state = 'idle';
             player.x = 0;
+            sedan1.reset();
+            sedan2.reset();
 
         }
     }
@@ -128,9 +148,13 @@ function render(elapsedTime, ctx) {
     crate1.render(elapsedTime, ctx, canvas);
     crate2.render(elapsedTime, ctx, canvas);
     crate3.render(elapsedTime, ctx, canvas);
+    crate4.render(elapsedTime, ctx, canvas);
     ctx.drawImage(grass, 64*4, 0, 64, canvas.height);
     
     player.render(elapsedTime, ctx);
+    if (player.state == 'gameover'){
+        // ctx.drawImage(gameover, 64*6, 0, canvas.width/3, canvas.height)
+    }
 
     // em.renderCells(ctx);
 }
@@ -150,10 +174,17 @@ module.exports = exports = Crate;
  * @param {Postition} position object specifying an x and y
  */
 function Crate(position) {
-    this.state = "idle";
+    this.setstat = Math.round(Math.random() * (1));
+    if (this.setstat){
+        this.state = "floaty";
+    }
+    else{
+        this.state = "sink";
+    }
+
     this.row = position.row;
     this.y = position.place;
-    this.direction = Math.round(Math.random() * (1));
+
     this.width = 64;
     this.height = 64;
     this.spritesheet = new Image();
@@ -162,7 +193,8 @@ function Crate(position) {
 
     this.timer = 0;
     this.frame = 0;
-    this.speed = Math.round(Math.random() * (2 - 1) + 1);
+    this.show = 5000;
+    this.hide = 1000;
 
     var self = this;
 
@@ -174,15 +206,21 @@ function Crate(position) {
  */
 Crate.prototype.update = function (time, canvas) {
     // console.log(this.row, this.x, this.y);
-    switch (this.direction) {
-        case 0:
-            // if (this.y < 430)
-            // {
-            //     this.y+=this.speed;
-            // }
-            // else{
-            //     this.y = -20;
-            // }
+    this.timer += time;
+    switch (this.state) {
+        case 'floaty':
+            if (this.timer >= this.show)
+            {
+                this.state = 'sink';
+                this.timer = 0;
+            }
+            break;
+        case "sink":
+            if(this.timer >= this.hide)
+            {
+                this.state = "floaty";
+                this.timer = 0;
+            }
             break;
     }
 };
@@ -192,12 +230,19 @@ Crate.prototype.update = function (time, canvas) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Crate.prototype.render = function(time, ctx, canvas) {
-    if (this.state == 'hostile'){
-        ctx.drawImage(this.spritesheet, this.row*64, this.y, 0, 0);
+    if (this.state == 'sink'){
+        // ctx.drawImage(this.spritesheet, this.row*64, this.y, 64, 64);
     }
     else{
         ctx.drawImage(this.spritesheet, this.row*64, this.y, 64, 64);
     }
+    if (this.state == 'floaty'){
+        ctx.strokeStyle = 'blue';
+    }
+    else{
+        ctx.strokeStyle = 'red';
+    }
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
 };
 },{}],3:[function(require,module,exports){
 "use strict";
@@ -277,7 +322,7 @@ function Player(position) {
     this.x = position.x;
     this.y = position.y;
     this.lives = 3;
-    this.width = 54;
+    this.width = 55;
     this.height = 64;
     this.spritesheet = new Image();
     this.spritesheet.src = encodeURI('assets/PlayerSprite2.png');
@@ -427,6 +472,8 @@ Player.prototype.render = function (time, ctx) {
             );
             break;
     }
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
 };
 
 },{}],5:[function(require,module,exports){
@@ -488,6 +535,8 @@ River.prototype.update = function (time, canvas) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 River.prototype.render = function(time, ctx, canvas) {
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
     ctx.drawImage(this.spritesheet, this.row*64, 0, 64, canvas.height);
 };
 },{}],6:[function(require,module,exports){
@@ -519,10 +568,12 @@ function Sedan(position) {
     if (this.direction == 0){
         this.spritesheet.src = encodeURI('assets/TRBRYcars [Converted] sedan.png');
         this.y = position.cavasHeight + 25;
+        this.resty = position.cavasHeight + 25;
     }
     else{
         this.y = -50;
-        this.spritesheet.src = encodeURI('assets/TRBRYcars [Converted] sedan-Reversed.png');
+        this.resty = -50;
+            this.spritesheet.src = encodeURI('assets/TRBRYcars [Converted] sedan-Reversed.png');
     }
 
     this.timer = 0;
@@ -567,6 +618,8 @@ Sedan.prototype.update = function (time, canvas) {
  */
 Sedan.prototype.render = function(time, ctx, canvas) {
     //rendering too much i think.
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
     ctx.drawImage(this.ground,
         this.row*64, 0, this.width, canvas.height);
     ctx.drawImage(
@@ -576,5 +629,9 @@ Sedan.prototype.render = function(time, ctx, canvas) {
         0, 0, this.spritesheet.width, this.spritesheet.height,
         this.x, this.y, this.width, this.height
     );
+};
+
+Sedan.prototype.reset = function(){
+    this.y = this.resety;
 };
 },{}]},{},[1]);

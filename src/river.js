@@ -56,5 +56,7 @@ River.prototype.update = function (time, canvas) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 River.prototype.render = function(time, ctx, canvas) {
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
     ctx.drawImage(this.spritesheet, this.row*64, 0, 64, canvas.height);
 };

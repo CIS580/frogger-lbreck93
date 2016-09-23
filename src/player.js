@@ -17,7 +17,7 @@ function Player(position) {
     this.x = position.x;
     this.y = position.y;
     this.lives = 3;
-    this.width = 54;
+    this.width = 55;
     this.height = 64;
     this.spritesheet = new Image();
     this.spritesheet.src = encodeURI('assets/PlayerSprite2.png');
@@ -167,4 +167,6 @@ Player.prototype.render = function (time, ctx) {
             );
             break;
     }
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
 };

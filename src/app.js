@@ -20,9 +20,10 @@ var sedan2 = new Sedan({row: 2, cavasHeight: -50});
 var sedan3 = new Sedan({row: 3, cavasHeight: canvas.height});
 
 var river1 = new River({row:3, canvasHeight: canvas.height});
-var crate1 = new Crate({row:3, place: 50});
-var crate2 = new Crate({row:3, place: 220});
-var crate3 = new Crate({row:3, place: 375});
+var crate1 = new Crate({row:3, place: 20});
+var crate2 = new Crate({row:3, place: 125});
+var crate3 = new Crate({row:3, place: 250});
+var crate4 = new Crate({row:3, place: 370});
 // var em = new EntityManager(canvas.width, canvas.height, 64);
 //
 // em.addEntity(player);
@@ -71,6 +72,7 @@ function update(elapsedTime) {
     crate1.update(elapsedTime, canvas);
     crate2.update(elapsedTime, canvas);
     crate3.update(elapsedTime, canvas);
+    crate4.update(elapsedTime, canvas);
     player.update(elapsedTime, canvas);
 
 
@@ -78,15 +80,33 @@ function update(elapsedTime) {
         player.state = 'dead';
         console.log('you got hit by a truck bro');
     }
+    if (player.checkForCollision(player, sedan2)){
+        player.state = 'dead';
+        console.log('you got hit by a truck bro');
+    }
+    // bootleg water check
+    if (192 < player.x || player.x < 256){
+        if ((player.checkForCollision(player, crate1) && crate1.state == 'sink')||
+            (player.checkForCollision(player, crate2) && crate2.state == 'sink')||
+            (player.checkForCollision(player, crate3) && crate3.state == 'sink')||
+            (player.checkForCollision(player, crate4) && crate4.state == 'sink')){
+            player.state = 'dead';
+            console.log('froggy drowned, what?');
+        }
+    }
 
     if (player.state == 'dead'){
         if (player.lives == 0){
-            //gameover
+            player.state = 'gameover';
+            player.x = 500;
+            player.y = 200;
         }
         else{
             player.lives -=1;
             player.state = 'idle';
             player.x = 0;
+            sedan1.reset();
+            sedan2.reset();
 
         }
     }
@@ -127,9 +147,13 @@ function render(elapsedTime, ctx) {
     crate1.render(elapsedTime, ctx, canvas);
     crate2.render(elapsedTime, ctx, canvas);
     crate3.render(elapsedTime, ctx, canvas);
+    crate4.render(elapsedTime, ctx, canvas);
     ctx.drawImage(grass, 64*4, 0, 64, canvas.height);
     
     player.render(elapsedTime, ctx);
+    if (player.state == 'gameover'){
+        // ctx.drawImage(gameover, 64*6, 0, canvas.width/3, canvas.height)
+    }
 
     // em.renderCells(ctx);
 }

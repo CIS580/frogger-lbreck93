@@ -13,10 +13,17 @@ module.exports = exports = Crate;
  * @param {Postition} position object specifying an x and y
  */
 function Crate(position) {
-    this.state = "idle";
+    this.setstat = Math.round(Math.random() * (1));
+    if (this.setstat){
+        this.state = "floaty";
+    }
+    else{
+        this.state = "sink";
+    }
+
     this.row = position.row;
     this.y = position.place;
-    this.direction = Math.round(Math.random() * (1));
+
     this.width = 64;
     this.height = 64;
     this.spritesheet = new Image();
@@ -25,7 +32,8 @@ function Crate(position) {
 
     this.timer = 0;
     this.frame = 0;
-    this.speed = Math.round(Math.random() * (2 - 1) + 1);
+    this.show = 5000;
+    this.hide = 1000;
 
     var self = this;
 
@@ -37,15 +45,21 @@ function Crate(position) {
  */
 Crate.prototype.update = function (time, canvas) {
     // console.log(this.row, this.x, this.y);
-    switch (this.direction) {
-        case 0:
-            // if (this.y < 430)
-            // {
-            //     this.y+=this.speed;
-            // }
-            // else{
-            //     this.y = -20;
-            // }
+    this.timer += time;
+    switch (this.state) {
+        case 'floaty':
+            if (this.timer >= this.show)
+            {
+                this.state = 'sink';
+                this.timer = 0;
+            }
+            break;
+        case "sink":
+            if(this.timer >= this.hide)
+            {
+                this.state = "floaty";
+                this.timer = 0;
+            }
             break;
     }
 };
@@ -55,10 +69,17 @@ Crate.prototype.update = function (time, canvas) {
  * {CanvasRenderingContext2D} ctx the context to render into
  */
 Crate.prototype.render = function(time, ctx, canvas) {
-    if (this.state == 'hostile'){
-        ctx.drawImage(this.spritesheet, this.row*64, this.y, 0, 0);
+    if (this.state == 'sink'){
+        // ctx.drawImage(this.spritesheet, this.row*64, this.y, 64, 64);
     }
     else{
         ctx.drawImage(this.spritesheet, this.row*64, this.y, 64, 64);
     }
+    if (this.state == 'floaty'){
+        ctx.strokeStyle = 'blue';
+    }
+    else{
+        ctx.strokeStyle = 'red';
+    }
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
 };

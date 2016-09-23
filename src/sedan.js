@@ -26,10 +26,12 @@ function Sedan(position) {
     if (this.direction == 0){
         this.spritesheet.src = encodeURI('assets/TRBRYcars [Converted] sedan.png');
         this.y = position.cavasHeight + 25;
+        this.resty = position.cavasHeight + 25;
     }
     else{
         this.y = -50;
-        this.spritesheet.src = encodeURI('assets/TRBRYcars [Converted] sedan-Reversed.png');
+        this.resty = -50;
+            this.spritesheet.src = encodeURI('assets/TRBRYcars [Converted] sedan-Reversed.png');
     }
 
     this.timer = 0;
@@ -74,6 +76,8 @@ Sedan.prototype.update = function (time, canvas) {
  */
 Sedan.prototype.render = function(time, ctx, canvas) {
     //rendering too much i think.
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
     ctx.drawImage(this.ground,
         this.row*64, 0, this.width, canvas.height);
     ctx.drawImage(
@@ -83,4 +87,8 @@ Sedan.prototype.render = function(time, ctx, canvas) {
         0, 0, this.spritesheet.width, this.spritesheet.height,
         this.x, this.y, this.width, this.height
     );
+};
+
+Sedan.prototype.reset = function(){
+    this.y = this.resety;
 };
