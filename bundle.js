@@ -101,6 +101,7 @@ function update(elapsedTime) {
             player.state = 'gameover';
             player.x = 500;
             player.y = 200;
+            return;
         }
         else{
             player.lives -=1;
@@ -110,6 +111,16 @@ function update(elapsedTime) {
             sedan2.reset();
 
         }
+    }
+    if (265 < player.x){
+        player.state = 'win'
+    }
+    if(player.state == 'win'){
+        player.score += 1;
+        player.x = 0;
+        player.speed = 1;
+        player.state = 'idle';
+        console.log('youre a winner!.. -_-')
     }
 
     //update entities
@@ -152,8 +163,13 @@ function render(elapsedTime, ctx) {
     ctx.drawImage(grass, 64*4, 0, 64, canvas.height);
     
     player.render(elapsedTime, ctx);
+
     if (player.state == 'gameover'){
-        // ctx.drawImage(gameover, 64*6, 0, canvas.width/3, canvas.height)
+        ctx.strokeText("Game Over!", 400, 100);
+    }
+    else{
+        ctx.strokeText("Score: " + player.score, 400, 200);
+        ctx.strokeText("Lives: " + player.lives, 400, 100);
     }
 
     // em.renderCells(ctx);
@@ -330,6 +346,7 @@ function Player(position) {
     this.spritesheetReverse.src = encodeURI('assets/PlayerSprite2Reverse.png');
     this.timer = 0;
     this.frame = 0;
+    this.score = 0;
 
     var self = this;
     window.onkeydown = function (event) {

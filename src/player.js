@@ -25,6 +25,7 @@ function Player(position) {
     this.spritesheetReverse.src = encodeURI('assets/PlayerSprite2Reverse.png');
     this.timer = 0;
     this.frame = 0;
+    this.score = 0;
 
     var self = this;
     window.onkeydown = function (event) {
