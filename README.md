@@ -65,3 +65,9 @@ Mini and Sports Car art was provided by  [bahi](http://opengameart.org/users/bah
 Sedan and Pickup art was provided by  [bahi](http://opengameart.org/users/bahi) of [Open Game Art](http://opengameart.org) under a CC-BY license.
 
 Game framework HTML5/CSS3/Javascript code was written by course instructor Nathan Bean, and released under a CC-BY license.
+
+Game texture pack provided by [calinou](http://opengameart.org/users/calinou) of [Open Game Art](http://opengameart.org ) under a CC-BY license.
+
+Game grass provided by [athile](http://opengameart.org/users/athile) of [Open Game Art](http://opengameart.org ) under a CC-BY license.
+
+Game crates provided by [lunavorax](http://opengameart.org/users/lunavorax) of [Open Game Art](http://opengameart.org ) under a CC-BY license.
